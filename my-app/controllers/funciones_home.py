@@ -19,21 +19,21 @@ from flask import send_file
 
 
 def procesar_form_empleado(dataForm, foto_perfil):
-    # Formateando Salario
-    salario_sin_puntos = re.sub('[^0-9]+', '', dataForm['salario_empleado'])
-    # convertir salario a INT
-    salario_entero = int(salario_sin_puntos)
+    # Formateando documento
+    documento_sin_puntos = re.sub('[^0-9]+', '', dataForm['documento'])
+    # convertir documento a INT
+    documento = int(documento_sin_puntos)
 
     result_foto_perfil = procesar_imagen_perfil(foto_perfil)
     try:
         with connectionBD() as conexion_MySQLdb:
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
 
-                sql = "INSERT INTO tbl_empleados (nombre_empleado, apellido_empleado, sexo_empleado, telefono_empleado, email_empleado, profesion_empleado, foto_empleado, salario_empleado) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+                sql = "INSERT INTO tbl_empleados (documento,nombre_empleado, apellido_empleado, tipo_empleado, telefono_empleado, email_empleado, cargo, foto_empleado) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
 
                 # Creando una tupla con los valores del INSERT
-                valores = (dataForm['nombre_empleado'], dataForm['apellido_empleado'], dataForm['sexo_empleado'],
-                           dataForm['telefono_empleado'], dataForm['email_empleado'], dataForm['profesion_empleado'], result_foto_perfil, salario_entero)
+                valores = (documento,dataForm['nombre_empleado'], dataForm['apellido_empleado'], dataForm['tipo_empleado'],
+                            dataForm['telefono_empleado'], dataForm['email_empleado'], dataForm['cargo'], result_foto_perfil)
                 cursor.execute(sql, valores)
 
                 conexion_MySQLdb.commit()
@@ -83,14 +83,15 @@ def sql_lista_empleadosBD():
                 querySQL = (f"""
                     SELECT 
                         e.id_empleado,
+                        e.documento,
                         e.nombre_empleado, 
-                        e.apellido_empleado,
-                        e.salario_empleado,
+                        e.apellido_empleado,                        
                         e.foto_empleado,
+                        e.cargo,
                         CASE
-                            WHEN e.sexo_empleado = 1 THEN 'Masculino'
-                            ELSE 'Femenino'
-                        END AS sexo_empleado
+                            WHEN e.tipo_empleado = 1 THEN 'Directo'
+                            ELSE 'Temporal'
+                        END AS tipo_empleado
                     FROM tbl_empleados AS e
                     ORDER BY e.id_empleado DESC
                     """)
@@ -111,16 +112,16 @@ def sql_detalles_empleadosBD(idEmpleado):
                 querySQL = ("""
                     SELECT 
                         e.id_empleado,
+                        e.documento,
                         e.nombre_empleado, 
-                        e.apellido_empleado,
-                        e.salario_empleado,
+                        e.apellido_empleado,                        
                         CASE
-                            WHEN e.sexo_empleado = 1 THEN 'Masculino'
-                            ELSE 'Femenino'
-                        END AS sexo_empleado,
+                            WHEN e.tipo_empleado = 1 THEN 'Directo'
+                            ELSE 'Temporal'
+                        END AS tipo_empleado,
                         e.telefono_empleado, 
                         e.email_empleado,
-                        e.profesion_empleado,
+                        e.cargo,
                         e.foto_empleado,
                         DATE_FORMAT(e.fecha_registro, '%Y-%m-%d %h:%i %p') AS fecha_registro
                     FROM tbl_empleados AS e
@@ -144,17 +145,17 @@ def empleadosReporte():
                 querySQL = ("""
                     SELECT 
                         e.id_empleado,
+                        e.documento,
                         e.nombre_empleado, 
-                        e.apellido_empleado,
-                        e.salario_empleado,
+                        e.apellido_empleado,                        
                         e.email_empleado,
                         e.telefono_empleado,
-                        e.profesion_empleado,
+                        e.cargo,
                         DATE_FORMAT(e.fecha_registro, '%d de %b %Y %h:%i %p') AS fecha_registro,
                         CASE
-                            WHEN e.sexo_empleado = 1 THEN 'Masculino'
-                            ELSE 'Femenino'
-                        END AS sexo_empleado
+                            WHEN e.tipo_empleado = 1 THEN 'Directo'
+                            ELSE 'Temporal'
+                        END AS tipo_empleado
                     FROM tbl_empleados AS e
                     ORDER BY e.id_empleado DESC
                     """)
@@ -173,8 +174,8 @@ def generarReporteExcel():
     hoja = wb.active
 
     # Agregar la fila de encabezado con los títulos
-    cabeceraExcel = ("Nombre", "Apellido", "Sexo",
-                     "Telefono", "Email", "Profesión", "Salario", "Fecha de Ingreso")
+    cabeceraExcel = ("Documento","Nombre", "Apellido", "Tipo Empleado",
+                     "Telefono", "Email", "Profesión", "Fecha de Ingreso")
 
     hoja.append(cabeceraExcel)
 
@@ -183,18 +184,18 @@ def generarReporteExcel():
 
     # Agregar los registros a la hoja
     for registro in dataEmpleados:
+        documento = registro['documento']
         nombre_empleado = registro['nombre_empleado']
         apellido_empleado = registro['apellido_empleado']
-        sexo_empleado = registro['sexo_empleado']
+        tipo_empleado = registro['tipo_empleado']
         telefono_empleado = registro['telefono_empleado']
         email_empleado = registro['email_empleado']
-        profesion_empleado = registro['profesion_empleado']
-        salario_empleado = registro['salario_empleado']
+        cargo = registro['cargo']
         fecha_registro = registro['fecha_registro']
 
         # Agregar los valores a la hoja
-        hoja.append((nombre_empleado, apellido_empleado, sexo_empleado, telefono_empleado, email_empleado, profesion_empleado,
-                     salario_empleado, fecha_registro))
+        hoja.append((documento,nombre_empleado, apellido_empleado, tipo_empleado, telefono_empleado, email_empleado, cargo,
+                      fecha_registro))
 
         # Itera a través de las filas y aplica el formato a la columna G
         for fila_num in range(2, hoja.max_row + 1):
@@ -227,13 +228,13 @@ def buscarEmpleadoBD(search):
                 querySQL = ("""
                         SELECT 
                             e.id_empleado,
+                            e.documento,
                             e.nombre_empleado, 
-                            e.apellido_empleado,
-                            e.salario_empleado,
+                            e.apellido_empleado,                            
                             CASE
-                                WHEN e.sexo_empleado = 1 THEN 'Masculino'
-                                ELSE 'Femenino'
-                            END AS sexo_empleado
+                                WHEN e.tipo_empleado = 1 THEN 'Directo'
+                                ELSE 'Temporal'
+                            END AS tipo_empleado
                         FROM tbl_empleados AS e
                         WHERE e.nombre_empleado LIKE %s 
                         ORDER BY e.id_empleado DESC
@@ -255,13 +256,13 @@ def buscarEmpleadoUnico(id):
                 querySQL = ("""
                         SELECT 
                             e.id_empleado,
+                            e.documento,
                             e.nombre_empleado, 
                             e.apellido_empleado,
-                            e.sexo_empleado,
+                            e.tipo_empleado,
                             e.telefono_empleado,
                             e.email_empleado,
-                            e.profesion_empleado,
-                            e.salario_empleado,
+                            e.cargo,                            
                             e.foto_empleado
                         FROM tbl_empleados AS e
                         WHERE e.id_empleado =%s LIMIT 1
@@ -281,14 +282,14 @@ def procesar_actualizacion_form(data):
             with conexion_MySQLdb.cursor(dictionary=True) as cursor:
                 nombre_empleado = data.form['nombre_empleado']
                 apellido_empleado = data.form['apellido_empleado']
-                sexo_empleado = data.form['sexo_empleado']
+                tipo_empleado = data.form['tipo_empleado']
                 telefono_empleado = data.form['telefono_empleado']
                 email_empleado = data.form['email_empleado']
-                profesion_empleado = data.form['profesion_empleado']
+                cargo = data.form['cargo']
 
-                salario_sin_puntos = re.sub(
-                    '[^0-9]+', '', data.form['salario_empleado'])
-                salario_empleado = int(salario_sin_puntos)
+                documento_sin_puntos = re.sub(
+                    '[^0-9]+', '', data.form['documento'])
+                documento = int(documento_sin_puntos)
                 id_empleado = data.form['id_empleado']
 
                 if data.files['foto_empleado']:
@@ -298,35 +299,35 @@ def procesar_actualizacion_form(data):
                     querySQL = """
                         UPDATE tbl_empleados
                         SET 
+                            documento = %s,
                             nombre_empleado = %s,
                             apellido_empleado = %s,
-                            sexo_empleado = %s,
+                            tipo_empleado = %s,
                             telefono_empleado = %s,
                             email_empleado = %s,
-                            profesion_empleado = %s,
-                            salario_empleado = %s,
+                            cargo = %s,                            
                             foto_empleado = %s
                         WHERE id_empleado = %s
                     """
-                    values = (nombre_empleado, apellido_empleado, sexo_empleado,
-                              telefono_empleado, email_empleado, profesion_empleado,
-                              salario_empleado, fotoForm, id_empleado)
+                    values = (documento,nombre_empleado, apellido_empleado, tipo_empleado,
+                              telefono_empleado, email_empleado, cargo,
+                               fotoForm, id_empleado)
                 else:
                     querySQL = """
                         UPDATE tbl_empleados
                         SET 
+                            documento = %s,
                             nombre_empleado = %s,
                             apellido_empleado = %s,
-                            sexo_empleado = %s,
+                            tipo_empleado = %s,
                             telefono_empleado = %s,
                             email_empleado = %s,
-                            profesion_empleado = %s,
-                            salario_empleado = %s
+                            cargo = %s                            
                         WHERE id_empleado = %s
                     """
-                    values = (nombre_empleado, apellido_empleado, sexo_empleado,
-                              telefono_empleado, email_empleado, profesion_empleado,
-                              salario_empleado, id_empleado)
+                    values = (documento, nombre_empleado, apellido_empleado, tipo_empleado,
+                              telefono_empleado, email_empleado, cargo,
+                               id_empleado)
 
                 cursor.execute(querySQL, values)
                 conexion_MySQLdb.commit()

@@ -68,13 +68,13 @@
 
           <div class="row mt-2">
             <div class="col-md-6">
-              <label for="sexo_empleado" class="form-label">
-                Sexo del empleado
+              <label for="tipo_empleado" class="form-label">
+                Tipo Empleado
               </label>
-              {% with tipo_sexo = {"1": "Masculino", "2": "Femenino"} %}
-              <select class="form-select" name="sexo_empleado">
-                {% for clave, valor in tipo_sexo.items() %} {% if clave ==
-                respuestaEmpleado.sexo_empleado|string %}
+              {% with tipo_empleado = {"1": "Directo", "0": "Temporal"} %}
+              <select class="form-select" name="tipo_empleado">
+                {% for clave, valor in tipo_empleado.items() %} {% if clave ==
+                respuestaEmpleado.tipo_empleado|string %}
                 <option value="{{ clave }}" selected>{{ valor }}</option>
                 {% else %}
                 <option value="{{ clave }}">{{ valor }}</option>
@@ -109,29 +109,29 @@
                 required />
             </div>
             <div class="col-md-6">
-              <label for="profesion_empleado" class="form-label">
-                Profesión del empleado
+              <label for="cargo" class="form-label">
+                Cargo
               </label>
               <input
                 class="form-control"
                 type="text"
-                name="profesion_empleado"
-                value="{{ respuestaEmpleado.profesion_empleado }}"
+                name="cargo"
+                value="{{ respuestaEmpleado.cargo }}"
                 required />
             </div>
           </div>
 
           <div class="row mt-2">
             <div class="col-md-6">
-              <label for="salario_empleado" class="form-label">
-                Salario del empleado
+              <label for="documento" class="form-label">
+                No. Documento
               </label>
               <input
                 class="form-control"
                 type="text"
-                name="salario_empleado"
-                value="{{ respuestaEmpleado.salario_empleado }}"
-                id="salario_empleado"
+                name="documento"
+                value="{{ respuestaEmpleado.documento }}"
+                id="documento"
                 required />
             </div>
             <div class="col-md-6">

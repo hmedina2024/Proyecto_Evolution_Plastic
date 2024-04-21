@@ -16,11 +16,11 @@ $("#imageUpload").change(function () {
 });
 
 /**
- * Formatear cantidad en salario
+ * Formatear Documento
  */
-let salario = document.querySelector("#salario_empleado");
-if (salario) {
-  salario.addEventListener("input", (inputClick) => {
+let documento = document.querySelector("#documento");
+if (documento) {
+  documento.addEventListener("input", (inputClick) => {
     let cantidad = inputClick.target.value.replace(/\D/g, ""); // Eliminar caracteres no numéricos
     cantidad = parseInt(cantidad, 10); // Convertir a número entero
     if (isNaN(cantidad)) {
@@ -28,7 +28,6 @@ if (salario) {
     }
     // Formatear la cantidad y asignarla al campo de entrada
     inputClick.target.value =
-      "$ " +
       cantidad.toLocaleString("es-CO", {
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,

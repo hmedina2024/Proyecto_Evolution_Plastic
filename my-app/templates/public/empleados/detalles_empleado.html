@@ -47,11 +47,11 @@
 
         <div class="row mt-2">
           <div class="col-md-6">
-            <label for="sexo_empleado" class="form-label">
-              Sexo del empleado
+            <label for="tipo_empleado" class="form-label">
+              Tipo Empleado
             </label>
             <br />
-            {{ detalle_empleado.sexo_empleado}}
+            {{ detalle_empleado.tipo_empleado}}
           </div>
           <div class="col-md-6">
             <label for="telefono_empleado" class="form-label">
@@ -71,23 +71,20 @@
             {{ detalle_empleado.email_empleado}}
           </div>
           <div class="col-md-6">
-            <label for="profesion_empleado" class="form-label">
-              Profesión del empleado
+            <label for="cargo" class="form-label">
+              Cargo
             </label>
             <br />
-            {{ detalle_empleado.profesion_empleado}}
+            {{ detalle_empleado.cargo}}
           </div>
         </div>
 
         <div class="row mt-2">
           <div class="col-md-6">
-            <label for="salario_empleado" class="form-label">
-              Salario del empleado
+            <label for="documento" class="form-label">
+              No. Documento
             </label>
-            <br />
-            $ {{
-            '{:,.0f}'.format(detalle_empleado.salario_empleado).replace(',',
-            '.')}}
+            <br />{{detalle_empleado.documento}}
           </div>
           <div class="col-md-6">
             <label for="" class="form-label"> IMAGEN DEL EMPLEADO </label>

@@ -28,7 +28,18 @@
         enctype="multipart/form-data">
         <div class="card-body">
           <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-4">
+              <label for="documento" class="form-label">
+                Documento
+              </label>
+              <input
+                class="form-control"
+                type="INT"
+                name="documento"
+                id="documento"
+                required />
+            </div>
+            <div class="col-md-4">
               <label for="nombre_empleado" class="form-label">
                 Nombre del empleado
               </label>
@@ -38,7 +49,7 @@
                 class="form-control"
                 required />
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
               <label for="apellido_empleado" class="form-label">
                 Apellido del empleado
               </label>
@@ -49,22 +60,21 @@
                 required />
             </div>
           </div>
-
           <div class="row mt-2">
-            <div class="col-md-6">
-              <label for="sexo_empleado" class="form-label">
-                Sexo del empleado
+            <div class="col-md-4">
+              <label for="tipo_empleado" class="form-label">
+                Tipo Empleado
               </label>
               <select
                 class="form-select"
-                name="sexo_empleado"
+                name="tipo_empleado"
                 aria-label="Default select example">
                 <option selected>Seleccione</option>
-                <option value="1">Masculino</option>
-                <option value="2">Femenino</option>
+                <option value="1">Directo</option>
+                <option value="2">Temporal</option>
               </select>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
               <label for="telefono_empleado" class="form-label">
                 Telefono del empleado
               </label>
@@ -74,10 +84,7 @@
                 name="telefono_empleado"
                 required />
             </div>
-          </div>
-
-          <div class="row mt-2">
-            <div class="col-md-6">
+            <div class="col-md-4">
               <label for="email_empleado" class="form-label">
                 Email del empleado
               </label>
@@ -87,28 +94,17 @@
                 name="email_empleado"
                 required />
             </div>
-            <div class="col-md-6">
-              <label for="profesion_empleado" class="form-label">
-                Profesión del empleado
-              </label>
-              <input
-                class="form-control"
-                type="text"
-                name="profesion_empleado"
-                required />
-            </div>
           </div>
 
-          <div class="row mt-2">
+          <div class="row mt-2">            
             <div class="col-md-6">
-              <label for="salario_empleado" class="form-label">
-                Salario del empleado
+              <label for="cargo" class="form-label">
+                Cargo
               </label>
               <input
                 class="form-control"
                 type="text"
-                name="salario_empleado"
-                id="salario_empleado"
+                name="cargo"
                 required />
             </div>
             <div class="col-md-6">
@@ -136,7 +132,6 @@
               </div>
             </div>
           </div>
-
           <div class="mb-3 mt-4 text-center">
             <button type="submit" class="btn rounded-pill btn-primary">
               Guardar registro ahora
